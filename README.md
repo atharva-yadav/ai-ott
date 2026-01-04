@@ -1,1 +1,1 @@
-# ai-ott
+# AI Powered OTT Application
