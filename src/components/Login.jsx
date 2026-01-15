@@ -1,5 +1,7 @@
+import Header from "./Header"
+
 const Login = () => {
-  return <div>Login</div>
+  return <Header />
 }
 
 export default Login
