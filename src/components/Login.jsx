@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Header from "./Header";
+import validate from "../utils/validate";
 
 const Login = () => {
   const [isSignInForm, setisSignInForm] = useState(true);
@@ -7,30 +8,41 @@ const Login = () => {
     setisSignInForm(!isSignInForm);
   };
 
+  const email = useRef(null);
+  const password = useRef(null);
+  const [validationErrorMessage, setvalidationErrorMessage] = useState(null);
+  const handleBtnClick = () => {
+    const msg = validate(email.current.value, password.current.value);
+    setvalidationErrorMessage(msg);
+  };
+
   return (
     <div className="min-h-screen pt-24 flex items-center justify-center bg-gray-50">
       <Header />
-      <form className="bg-white p-10 rounded-2xl w-full max-w-md shadow-sm border border-gray-200">
+      <form onSubmit={(e) => e.preventDefault()} className="bg-white p-10 rounded-2xl w-full max-w-md shadow-sm border border-gray-200">
         <h1 className="text-gray-900 font-semibold text-2xl mb-8">
           {isSignInForm ? "Sign In" : "Sign Up"}
         </h1>
 
         <div className="space-y-5">
-          {!isSignInForm && <div>
-            <label className="text-gray-700 text-sm font-medium mb-2 block">
-              Name
-            </label>
-            <input
-              type="text"
-              placeholder="Enter your name"
-              className="w-full p-3 rounded-lg bg-white text-gray-900 border border-gray-300 focus:border-red-400 focus:ring-2 focus:ring-red-400/20 focus:outline-none transition-all placeholder:text-gray-400"
-            />
-          </div>}
+          {!isSignInForm && (
+            <div>
+              <label className="text-gray-700 text-sm font-medium mb-2 block">
+                Name
+              </label>
+              <input
+                type="text"
+                placeholder="Enter your name"
+                className="w-full p-3 rounded-lg bg-white text-gray-900 border border-gray-300 focus:border-red-400 focus:ring-2 focus:ring-red-400/20 focus:outline-none transition-all placeholder:text-gray-400"
+              />
+            </div>
+          )}
           <div>
             <label className="text-gray-700 text-sm font-medium mb-2 block">
               Email
             </label>
             <input
+              ref={email}
               type="text"
               placeholder="Enter your email"
               className="w-full p-3 rounded-lg bg-white text-gray-900 border border-gray-300 focus:border-red-400 focus:ring-2 focus:ring-red-400/20 focus:outline-none transition-all placeholder:text-gray-400"
@@ -41,6 +53,7 @@ const Login = () => {
               Password
             </label>
             <input
+              ref={password}
               type="password"
               placeholder="Enter your password"
               className="w-full p-3 rounded-lg bg-white text-gray-900 border border-gray-300 focus:border-red-400 focus:ring-2 focus:ring-red-400/20 focus:outline-none transition-all placeholder:text-gray-400"
@@ -48,9 +61,11 @@ const Login = () => {
           </div>
         </div>
 
+        <p className="py-2 text-red-600">{validationErrorMessage}</p>
         <button
           type="submit"
-          className="w-full p-3 mt-8 bg-red-400 hover:bg-red-500 text-white font-medium rounded-lg transition-colors duration-200"
+          className="cursor-pointer w-full p-3 mt-8 bg-red-400 hover:bg-red-500 text-white font-medium rounded-lg transition-colors duration-200"
+          onClick={handleBtnClick}
         >
           {isSignInForm ? "Sign In" : "Sign Up"}
         </button>
