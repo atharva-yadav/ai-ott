@@ -1,6 +1,8 @@
 import { useRef, useState } from "react";
 import Header from "./Header";
 import validate from "../utils/validate";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../utils/firebase";
 
 const Login = () => {
   const [isSignInForm, setisSignInForm] = useState(true);
@@ -14,12 +16,54 @@ const Login = () => {
   const handleBtnClick = () => {
     const msg = validate(email.current.value, password.current.value);
     setvalidationErrorMessage(msg);
+
+    if (msg) return;
+
+    // Create user if Email & Password is valid
+    if (!isSignInForm) {
+      // Sign Up logic
+      createUserWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value,
+      )
+        .then((userCredential) => {
+          // Signed up
+          const user = userCredential.user;
+          console.info("User: ", user);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setvalidationErrorMessage(
+            `${errorMessage} Error code: ${errorMessage}`,
+          );
+        });
+    } else {
+      // Sign In logic
+      signInWithEmailAndPassword(auth, email.current.value, password.current.value)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.info("User: ", user);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setvalidationErrorMessage(
+            `${errorMessage} Error code: ${errorMessage}`,
+          );
+        });
+    }
   };
 
   return (
     <div className="min-h-screen pt-24 flex items-center justify-center bg-gray-50">
       <Header />
-      <form onSubmit={(e) => e.preventDefault()} className="bg-white p-10 rounded-2xl w-full max-w-md shadow-sm border border-gray-200">
+      <form
+        onSubmit={(e) => e.preventDefault()}
+        className="bg-white p-10 rounded-2xl w-full max-w-md shadow-sm border border-gray-200"
+      >
         <h1 className="text-gray-900 font-semibold text-2xl mb-8">
           {isSignInForm ? "Sign In" : "Sign Up"}
         </h1>
